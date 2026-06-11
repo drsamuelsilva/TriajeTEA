@@ -279,24 +279,22 @@ export default function App() {
                   <div className="flex justify-between items-start gap-4">
                     <div>
                       <div className="flex items-center gap-2 mb-2">
-                         {q.is_red_flag && <div className="w-2 h-2 rounded-full bg-rose-500 shrink-0"></div>}
-                         {q.is_masking_indicator && <div className="w-2 h-2 rounded-full bg-amber-500 shrink-0"></div>}
+                         {q.is_critical && <span className="text-[9px] font-extrabold text-rose-700 bg-rose-100/70 border border-rose-200 rounded px-1.5 py-0.5 shrink-0 uppercase tracking-wide">Crítico</span>}
+                         {q.is_red_flag && !q.is_critical && <div className="w-2 h-2 rounded-full bg-rose-500 shrink-0"></div>}
                          <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">{q.domain}</span>
                       </div>
                       <p className="text-sm font-medium text-slate-800">{q.text_es}</p>
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 gap-3 max-w-md">
                     {[
-                      { value: 0, label: 'Ausente (0)' },
-                      { value: 1, label: 'Sinal Leve (+)' },
-                      { value: 2, label: 'Sinal Moderado (++)' },
-                      { value: 3, label: 'Sinal Grave (+++)' }
+                      { value: 0, label: 'NO (Sin riesgo / Habilidad presente)' },
+                      { value: 1, label: 'SÍ (Con riesgo / Falla en el hito)' }
                     ].map(opt => (
                       <label 
                         key={opt.value} 
-                        className={`cursor-pointer border rounded-md p-3 text-center transition-all ${responses[q.id] === opt.value ? 'bg-indigo-50/60 border-indigo-400 text-indigo-850 shadow-sm' : 'border-slate-200 text-slate-600 hover:bg-slate-50/50 hover:border-slate-300'}`}
+                        className={`cursor-pointer border rounded-md p-3 text-center transition-all ${responses[q.id] === opt.value ? 'bg-indigo-50/60 border-indigo-400 text-indigo-900 shadow-sm' : 'border-slate-200 text-slate-600 hover:bg-slate-50/50 hover:border-slate-300'}`}
                       >
                         <input 
                           type="radio" 

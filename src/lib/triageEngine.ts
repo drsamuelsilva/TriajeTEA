@@ -5,9 +5,9 @@ const matrixInfo = matrixData as unknown as { age_groups: Record<string, any>, s
 
 export class TriageEngine {
   static determineAgeGroup(ageMonths: number): AgeGroup {
-    if (ageMonths <= 12) return 'A';
-    if (ageMonths <= 24) return 'B';
-    return 'C';
+    // Menores de 18 meses -> 'A', Mayores o iguales -> 'B'
+    if (ageMonths < 18) return 'A';
+    return 'B';
   }
 
   static getApplicableItems(ageGroup: AgeGroup): ScreeningItem[] {
@@ -19,38 +19,45 @@ export class TriageEngine {
     const domainRisks: Record<string, DomainRisk> = {};
     const redFlagsDetected: ScreeningItem[] = [];
     const maskingIndicatorsDetected: ScreeningItem[] = [];
+    const criticalItemsActive: ScreeningItem[] = [];
 
-    // Initialize domains
+    // Inicializar dominios
     const domains = [...new Set(matrixInfo.screening_matrix.map(i => i.domain))];
     domains.forEach(domain => {
       domainRisks[domain] = { score: 0, maxScore: 0, riskPercentage: 0 };
     });
 
-    for (const [itemId, intensity] of Object.entries(responses)) {
+    let score = 0;
+
+    for (const [itemId, value] of Object.entries(responses)) {
       const item = matrixInfo.screening_matrix.find(i => i.id === itemId);
       if (!item) continue;
 
       const weight = item.weights[ageGroup] || 0;
       if (weight === 0) continue;
 
-      const maxItemScore = 3 * weight;
-      const actualScore = intensity * weight;
+      // Un cuestionario binario (0 = NO, 1 = SÍ)
+      const isYes = value === 1;
 
-      domainRisks[item.domain].maxScore += maxItemScore;
-      domainRisks[item.domain].score += actualScore;
+      // Calcular para dominios
+      domainRisks[item.domain].maxScore += 1;
+      if (isYes) {
+        domainRisks[item.domain].score += 1;
+        score += 1;
 
-      // Evaluate Red Flags
-      if (item.is_red_flag && intensity >= 2) {
-        redFlagsDetected.push(item);
-      }
+        // Evaluar banderas rojas
+        if (item.is_red_flag) {
+          redFlagsDetected.push(item);
+        }
 
-      // Evaluate Masking Indicators 
-      if (item.is_masking_indicator && intensity >= 2) {
-        maskingIndicatorsDetected.push(item);
+        // Evaluar ítems críticos nucleares (1, 2, 3)
+        if (item.is_critical) {
+          criticalItemsActive.push(item);
+        }
       }
     }
 
-    // Calculate domain percentages
+    // Calcular porcentajes de riesgo de los dominios
     for (const domain of domains) {
       const stats = domainRisks[domain];
       if (stats.maxScore > 0) {
@@ -58,31 +65,32 @@ export class TriageEngine {
       }
     }
 
-    // Rule 1: High neurodevelopmental risk if >= 2 red flags
-    const highRisk = redFlagsDetected.length >= 2;
+    // Regla de Alerta Crítica (Critical Trigger)
+    const criticalTriggerActive = criticalItemsActive.length > 0;
 
-    // Rule 2: Masking warning
-    // Posible sesgo si alto enmascaramiento pero interacción social reportada normal.
-    // Asimilemos "alto enmascaramiento" a riskPercentage de Enmascaramiento >= 50%
-    // Asimilemos "interacción social normal" a riskPercentage de Social < 30%
-    const maskingDomain = domainRisks["Enmascaramiento"];
-    const socialDomain = domainRisks["Social"];
-    let maskingWarning = false;
-
-    if (
-      maskingDomain && socialDomain && 
-      maskingDomain.riskPercentage >= 50 && 
-      socialDomain.riskPercentage < 30
-    ) {
-      maskingWarning = true;
+    // Lógica del Algoritmo de Riesgo Global
+    // - Bajo Riesgo: 0-1 ítems marcados Y ningún ítem crítico activo.
+    // - Riesgo Moderado: 2 ítems marcados, O 1 ítem crítico activo.
+    // - Alto Riesgo: 3 o más ítems marcados, O más de un ítem crítico activo.
+    let riskLevel: 'Bajo' | 'Moderado' | 'Alto' = 'Bajo';
+    if (score >= 3 || criticalItemsActive.length > 1) {
+      riskLevel = 'Alto';
+    } else if (score === 2 || criticalItemsActive.length === 1) {
+      riskLevel = 'Moderado';
     }
+
+    const highRisk = riskLevel === 'Alto';
 
     return {
       domainRisks,
       redFlagsDetected,
-      maskingIndicatorsDetected,
+      maskingIndicatorsDetected, // Se mantiene vacío por simplificación
       highRisk,
-      maskingWarning
+      maskingWarning: false,     // Se mantiene falso por simplificación
+      score,
+      riskLevel,
+      criticalTriggerActive,
+      criticalItemsActive
     };
   }
 }

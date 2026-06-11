@@ -1,95 +1,56 @@
 {
   "age_groups": {
-    "A": { "id": "A", "label": "Hasta 1 año (0-12 meses)", "min_months": 0, "max_months": 12 },
-    "B": { "id": "B", "label": "De 1 a 2 años (12-24 meses)", "min_months": 12, "max_months": 24 },
-    "C": { "id": "C", "label": "3 años o más (36+ meses)", "min_months": 36, "max_months": 180 }
+    "A": { "id": "A", "label": "Menor de 18 meses", "min_months": 0, "max_months": 18 },
+    "B": { "id": "B", "label": "18 meses o más", "min_months": 18, "max_months": 180 }
   },
   "screening_matrix": [
     {
-      "id": "MOT_01",
-      "domain": "Motor",
-      "text_es": "Movimientos estereotipados, aleteo (flapping) de manos, golpear objetos o sacudir manos.",
-      "weights": { "A": 1, "B": 2, "C": 3 },
-      "is_red_flag": false
+      "id": "VIS_01",
+      "domain": "Comunicación Social",
+      "text_es": "Contacto Visual Anómalo: El niño evita la mirada o no sostiene el contacto visual al interactuar, jugar o vestirse.",
+      "weights": { "A": 1, "B": 1 },
+      "is_red_flag": true,
+      "is_critical": true
     },
     {
-      "id": "MOT_02",
-      "domain": "Motor",
-      "text_es": "Movimiento pendular del tronco, parpadeos extraños, producción de sonidos atípicos.",
-      "weights": { "A": 0, "B": 2, "C": 3 },
-      "is_red_flag": false
+      "id": "NOM_01",
+      "domain": "Comunicación Social",
+      "text_es": "Ausencia de Respuesta al Nombre: El niño no voltea, no detiene su actividad ni mira al evaluador/cuidador cuando se le llama por su nombre (descartando sospecha de sordera).",
+      "weights": { "A": 1, "B": 1 },
+      "is_red_flag": true,
+      "is_critical": true
     },
     {
-      "id": "MOT_03",
-      "domain": "Motor",
-      "text_es": "Andar en puntas de pie (marcha equina), sobre todo después de los 3 años.",
-      "weights": { "A": 0, "B": 0, "C": 2 },
-      "is_red_flag": false
+      "id": "CONJ_01",
+      "domain": "Comunicación Social",
+      "text_es": "Ausencia de Atención Conjunta / No Apuntar: El niño no señala con el dedo para compartir interés (p. ej., mostrar un juguete, un animal o algo llamativo), no para pedir ayuda, sino para compartir.",
+      "weights": { "A": 1, "B": 1 },
+      "is_red_flag": true,
+      "is_critical": true
     },
     {
-      "id": "SOC_01",
-      "domain": "Social",
-      "text_es": "Evitar o no realizar contacto visual directo y sostenido.",
-      "weights": { "A": 3, "B": 3, "C": 3 },
-      "is_red_flag": true
-    },
-    {
-      "id": "SOC_02",
-      "domain": "Social",
-      "text_es": "No responder al ser llamado por su nombre (o parecer sordo sin causa orgánica).",
-      "weights": { "A": 2, "B": 2, "C": 3 },
-      "is_red_flag": true
-    },
-    {
-      "id": "SOC_03",
-      "domain": "Social",
-      "text_es": "Ausencia de sonrisa social o reciprocidad afectiva.",
-      "weights": { "A": 3, "B": 3, "C": 2 },
-      "is_red_flag": true
-    },
-    {
-      "id": "COM_01",
-      "domain": "Habla/Comunicación",
-      "text_es": "El habla no suele tener entonación típica (monótona, prosodia atípica).",
-      "weights": { "A": 0, "B": 1, "C": 3 },
-      "is_red_flag": true
-    },
-    {
-      "id": "COM_02",
-      "domain": "Habla/Comunicación",
-      "text_es": "Incapacidad de gestos sociales simples como decir 'hola' o 'chau' con la mano.",
-      "weights": { "A": 1, "B": 3, "C": 3 },
-      "is_red_flag": true
-    },
-    {
-      "id": "COM_03",
-      "domain": "Habla/Comunicación",
-      "text_es": "Comprensión del lenguaje puramente literal (dificultad con el sarcasmo, ironía o juego dinámico).",
-      "weights": { "A": 0, "B": 1, "C": 2 },
-      "is_red_flag": true
-    },
-    {
-      "id": "EMO_01",
-      "domain": "Emocional/Conductual",
-      "text_es": "Ausencia de la conexión típica de mirar y tocar a la madre o cuidador principal.",
-      "weights": { "A": 3, "B": 3, "C": 3 },
-      "is_red_flag": true
-    },
-    {
-      "id": "MASK_01",
-      "domain": "Enmascaramiento",
-      "text_es": "Excelente memoria o atención al detalle, presentados como motivo de orgullo por los cuidadores.",
-      "weights": { "A": 0, "B": 1, "C": 2 },
+      "id": "REC_01",
+      "domain": "Comunicación Social",
+      "text_es": "Falta de Sonrisa Social / Reciprocidad: El niño no devuelve la sonrisa ni reacciona con afecto/placer ante las expresiones positivas de los cuidadores.",
+      "weights": { "A": 1, "B": 1 },
       "is_red_flag": false,
-      "is_masking_indicator": true
+      "is_critical": false
     },
     {
-      "id": "MASK_02",
-      "domain": "Enmascaramiento",
-      "text_es": "Pasividad extrema (el niño 'no da trabajo', es 'muy tranquilo' o 'no llora por nada').",
-      "weights": { "A": 1, "B": 1, "C": 2 },
+      "id": "SIMB_01",
+      "domain": "Juego / Imitación",
+      "text_es": "Ausencia de Juego Simbólico / Imitación: El niño no realiza juegos de imitación o fantasía (p. ej., alimentar a un muñeco, hacer como que habla por teléfono, aplaudir o imitar gestos).",
+      "weights": { "A": 1, "B": 1 },
       "is_red_flag": false,
-      "is_masking_indicator": true
+      "is_critical": false
+    },
+    {
+      "id": "RIG_01",
+      "domain": "Conducta Rígida / Estereotipias",
+      "text_es": "Patrones Conductuales Rígidos o Estereotipias: Presencia de movimientos raros repetitivos (aleteo de manos, girar objetos sin parar, caminar en puntas) o adherencia inflexible a rutinas.",
+      "weights": { "A": 1, "B": 1 },
+      "is_red_flag": false,
+      "is_critical": false
     }
   ]
 }

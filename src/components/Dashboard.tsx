@@ -456,29 +456,29 @@ DIRECTRICES DE FORMATO:
                     <tr className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">
                       <th className="px-6 py-3">Ítem de Evaluación</th>
                       <th className="px-4 py-3">Dominio</th>
-                      <th className="px-4 py-3 text-center">Intensidad (0-3)</th>
+                      <th className="px-4 py-3 text-center">Respuesta (SÍ/NO)</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50 text-xs">
                     {itemsArray.map((item, idx) => (
                       <tr key={idx} className="hover:bg-slate-50 transition-colors">
                         <td className="px-6 py-4 font-medium flex items-center gap-2">
-                           {item.is_red_flag && item.intensity >= 2 && <div className="w-2 h-2 rounded-full bg-rose-500 shrink-0"></div>}
-                           {item.is_masking_indicator && item.intensity >= 2 && <div className="w-2 h-2 rounded-full bg-amber-500 shrink-0"></div>}
+                           {item.is_critical && item.intensity === 1 && <span className="text-[9px] font-extrabold text-rose-700 bg-rose-100 border border-rose-200 rounded px-1.5 py-0.5 shrink-0 uppercase tracking-wide">Crítico</span>}
+                           {item.is_red_flag && !item.is_critical && item.intensity === 1 && <div className="w-2 h-2 rounded-full bg-rose-500 shrink-0"></div>}
                            {item.text_es}
                         </td>
-                        <td className={`px-4 py-4 italic ${item.is_masking_indicator ? 'font-medium text-amber-600' : 'text-slate-500'}`}>
+                        <td className="px-4 py-4 text-slate-500">
                           {item.domain}
                         </td>
                         <td className="px-4 py-4">
-                           <div className={`text-center font-mono font-bold mx-auto w-8 h-8 flex items-center justify-center rounded ${
-                             item.intensity >= 2 && item.is_red_flag 
-                               ? 'text-rose-600 bg-rose-50' 
-                               : item.intensity >= 2 && item.is_masking_indicator 
-                                 ? 'text-amber-600 bg-amber-50'
-                                 : 'text-slate-600'
+                           <div className={`text-center font-bold mx-auto px-2 h-8 flex items-center justify-center rounded text-xs ${
+                             item.intensity === 1 
+                               ? item.is_critical 
+                                 ? 'text-rose-700 bg-rose-100 border border-rose-200' 
+                                 : 'text-rose-600 bg-rose-50' 
+                               : 'text-slate-500 bg-slate-50 border border-slate-100'
                            }`}>
-                             {item.intensity}
+                             {item.intensity === 1 ? 'SÍ (Riesgo)' : 'NO (Normal)'}
                            </div>
                         </td>
                       </tr>
@@ -612,14 +612,18 @@ DIRECTRICES DE FORMATO:
               )}
               
               <div className="flex gap-2 flex-wrap mt-4 pt-3 border-t border-slate-800 shrink-0">
-                {results.highRisk && (
-                  <div className="px-2 py-0.5 bg-rose-500/20 rounded border border-rose-500/30 text-[10px] font-semibold text-rose-300">
-                    Riesgo Alto
-                  </div>
-                )}
-                {results.maskingWarning && (
-                  <div className="px-2 py-0.5 bg-amber-500/20 rounded border border-amber-500/30 text-[10px] font-semibold text-amber-300">
-                    Posible Sesgo de Reporte (ParentMask)
+                <div className={`px-2 py-0.5 rounded border text-[10px] font-bold ${
+                  results.riskLevel === 'Alto'
+                    ? 'bg-rose-500/20 border-rose-500/30 text-rose-300'
+                    : results.riskLevel === 'Moderado'
+                      ? 'bg-amber-500/20 border-amber-500/30 text-amber-300'
+                      : 'bg-emerald-500/20 border-emerald-500/30 text-emerald-300'
+                }`}>
+                  Riesgo {results.riskLevel} (Puntaje: {results.score}/6)
+                </div>
+                {results.criticalTriggerActive && (
+                  <div className="px-2 py-0.5 bg-rose-600/20 rounded border border-rose-600/30 text-[10px] font-bold text-rose-200">
+                    Alerta Crítica Activada
                   </div>
                 )}
               </div>

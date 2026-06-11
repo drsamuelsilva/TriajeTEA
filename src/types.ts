@@ -1,4 +1,4 @@
-export type AgeGroup = 'A' | 'B' | 'C';
+export type AgeGroup = 'A' | 'B';
 
 export interface AgeGroupConfig {
   id: AgeGroup;
@@ -14,6 +14,7 @@ export interface ScreeningItem {
   weights: Record<AgeGroup, number>;
   is_red_flag: boolean;
   is_masking_indicator?: boolean;
+  is_critical?: boolean;
 }
 
 export interface ScreeningMatrix {
@@ -38,7 +39,7 @@ export interface EvaluationSession {
   id: string;
   date: string;
   ageMonths: number;
-  responses: Record<string, number>; // itemId -> intensity (0,1,2,3)
+  responses: Record<string, number>; // itemId -> 0 (NO) o 1 (SÍ)
   results: TriageResults;
 }
 
@@ -55,4 +56,10 @@ export interface TriageResults {
   highRisk: boolean;
   maskingWarning: boolean;
   aiReport?: string;
+  
+  // Nuevos campos del algoritmo de 6 ítems
+  score: number;
+  riskLevel: 'Bajo' | 'Moderado' | 'Alto';
+  criticalTriggerActive: boolean;
+  criticalItemsActive: ScreeningItem[];
 }
