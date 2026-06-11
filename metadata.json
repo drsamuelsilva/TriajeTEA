@@ -1,0 +1,6 @@
+{
+  "name": "NeuroScreen 360",
+  "description": "Plataforma digital de triaje y monitoreo del neurodesarrollo infantil, diseñada para la detección temprana de señales de alerta clínica.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
