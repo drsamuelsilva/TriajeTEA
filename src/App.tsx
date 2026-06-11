@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { differenceInMonths, parseISO } from 'date-fns';
 import { Patient, EvaluationSession } from './types';
 import { TriageEngine } from './lib/triageEngine';
@@ -15,6 +15,46 @@ type AppState = 'PATIENT_ENTRY' | 'SCREENING' | 'DASHBOARD';
 
 export default function App() {
   const [appState, setAppState] = useState<AppState>('PATIENT_ENTRY');
+  
+  // Estados para la PWA (Instalación en celular)
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isInstallable, setIsInstallable] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setIsInstallable(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    // Detectar dispositivos iOS (Safari)
+    const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone;
+    setIsIOS(isIOSDevice && !isStandalone);
+
+    // Registrar Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Service Worker registrado:', reg.scope))
+        .catch(err => console.error('Error al registrar Service Worker:', err));
+    }
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallApp = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`PWA install choice: ${outcome}`);
+    setDeferredPrompt(null);
+    setIsInstallable(false);
+  };
   
   const [patientData, setPatientData] = useState<Partial<Patient>>({ 
     evaluations: [],
@@ -354,7 +394,29 @@ export default function App() {
               <span className="text-lg font-bold text-slate-900">Bienvenido</span>
             </div>
           )}
-          <div className="flex gap-3">
+          <div className="flex gap-3 items-center">
+            {isInstallable && (
+              <button 
+                onClick={handleInstallApp}
+                className="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
+              >
+                <svg className="w-3.5 h-3.5 animate-bounce" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>
+                Instalar App
+              </button>
+            )}
+            {isIOS && (
+              <button 
+                onClick={() => alert("Para instalar en iOS (Safari):\n1. Pulse el botón 'Compartir' (cuadrado con flecha hacia arriba).\n2. Seleccione 'Añadir a la pantalla de inicio'.")}
+                className="px-3 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-md text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15M9 12l3 3m0 0l3-3m-3 3V2.25" />
+                </svg>
+                Instalar iOS
+              </button>
+            )}
             {session && (
                <button onClick={() => {
                   setAppState('PATIENT_ENTRY');

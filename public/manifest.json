@@ -1,0 +1,24 @@
+{
+  "short_name": "NeuroScreen",
+  "name": "NeuroScreen 360 - Triaje TEA",
+  "description": "Plataforma digital de triaje y monitoreo del neurodesarrollo infantil y autismo.",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "./",
+  "background_color": "#F8FAFC",
+  "theme_color": "#4F46E5",
+  "display": "standalone",
+  "orientation": "portrait"
+}

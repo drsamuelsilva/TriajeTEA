@@ -271,7 +271,7 @@ DIRECTRICES DE FORMATO:
 
     const title = view === 'clinical' ? 'Reporte Clínico de Triaje TEA (Profesional)' : 'Plan de Acción y Acompañamiento Familiar';
     const patientName = patientData.name || 'Anónimo';
-    const patientAge = `${chronologicalAgeMonths} meses` + (currentAgeMonths !== chronologicalAgeMonths ? ` (Edad corregida: ${currentAgeMonths} meses)` : '');
+    const patientAge = `${ageMonths} meses` + (patientData.gestationalWeeks && patientData.gestationalWeeks < 37 ? ' (Edad Corregida)' : '');
     const patientSex = patientData.sex || 'No especificado';
     const dateStr = new Date(session.date).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
