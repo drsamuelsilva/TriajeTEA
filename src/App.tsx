@@ -357,11 +357,11 @@ export default function App() {
         </nav>
         <div className="p-6 mt-auto border-t border-slate-700">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full bg-slate-650 flex items-center justify-center text-slate-350 font-bold shrink-0">DR</div>
-            <div>
-              <p className="text-xs text-white font-semibold">Dr. Rodríguez</p>
-              <p className="text-[10px] text-slate-400">Neuropediatra</p>
-            </div>
+             <div className="w-10 h-10 rounded-full bg-slate-650 flex items-center justify-center text-slate-350 font-bold shrink-0">DS</div>
+             <div>
+               <p className="text-xs text-white font-semibold">Dr. Samuel Silva</p>
+               <p className="text-[10px] text-slate-400">Neuropediatra</p>
+             </div>
           </div>
           <div className="text-[10px] text-slate-400 py-2 px-3 border border-slate-700 rounded bg-slate-700/50">Compliant with HIPAA/GDPR</div>
         </div>
